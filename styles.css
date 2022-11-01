@@ -37,7 +37,7 @@ body {
     user-select: none;
 }
 #grid > div.pixel-hover {
-    border: 3px solid #0002;
+    border: 3px solid #0002 !important;
 }
 
 #color-selector {

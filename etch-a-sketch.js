@@ -6,8 +6,11 @@ const clearBtn = document.querySelector("#clear-btn");
 const randomBtn = document.querySelector("#random-btn");
 const undoBtn = document.querySelector("#undo-btn");
 const redoBtn = document.querySelector("#redo-btn");
+const gridlinesBtn = document.querySelector("#gridlines-btn");
 const canvasHistory = [];
 const gridSizeHistory = [];
+const buttonOnColor = "yellow";
+const buttonOffColor = "#f0f0f0";
 
 const body = document.body;
 
@@ -21,6 +24,7 @@ let brushSize = 3;
 let isRandomColors = false;
 let undoCounter = 0;
 let undoCounterMax = 0;
+let isGridlinesOn = true;
 
 let xPos = null;
 let yPos = null;
@@ -50,8 +54,6 @@ function createGrid(gridSize, pixelSize, saveUndo = true, canvasToLoad = []) {
         currentCanvas = copyArray(canvasToLoad);
         isCanvasImported = true;
     }
-
-    console.log(currentCanvas);
     
     //reset current grid
     grid.innerHTML = "";
@@ -69,6 +71,12 @@ function createGrid(gridSize, pixelSize, saveUndo = true, canvasToLoad = []) {
                 pixel.style.backgroundColor = currentCanvas[i][j];
             } else {
                 pixel.style.backgroundColor = "white";
+            }
+
+            if (isGridlinesOn) {
+                pixel.style.borderWidth = "1px";
+            } else {
+                pixel.style.borderWidth = "0px";
             }
 
             grid.appendChild(pixel);
@@ -121,21 +129,12 @@ function createGrid(gridSize, pixelSize, saveUndo = true, canvasToLoad = []) {
 // save current grid to undo history
 function saveCanvasUndo(canvasSnapshot, gridSizeSnapshot) {
 
-    if (undoCounter != canvasHistory.length) {
-        console.log("DIFFERENT");
-    }
-
-    console.log(copyArray(canvasSnapshot));
-
     canvasHistory[undoCounter] = copyArray(canvasSnapshot);
     gridSizeHistory[undoCounter] = gridSizeSnapshot;
 
     undoCounter++;
     undoCounterMax = undoCounter;
-    console.log(`   undoCounter:  ${undoCounter}`);
-    console.log(`undoCounterMax:  ${undoCounterMax}`);
 
-    //console.log(canvasHistory);
 }
 
 
@@ -146,20 +145,19 @@ undoBtn.addEventListener("click", undo);
 
 function undo() {
     if (undoCounter <= 1) {
-        console.log("NO HISTORY");
+        console.log("NOTHING TO UNDO");
         return;
     }
 
     const lastUndo = canvasHistory[undoCounter - 2];
     const lastGridSize = gridSizeHistory[undoCounter - 2];
     const lastPixelSize = `${512 / lastGridSize}px`;
-    sizeSliderDisplay.textContent = `${sizeSlider.value} x ${sizeSlider.value}`;
+
+    updateSlider(lastGridSize);
 
     createGrid(lastGridSize, lastPixelSize, false, lastUndo);
 
     undoCounter--;
-    console.log(`   undoCounter:  ${undoCounter}`);
-    console.log(`undoCounterMax:  ${undoCounterMax}`);
 }
 
 
@@ -177,13 +175,20 @@ function redo() {
     const nextGridSize = gridSizeHistory[undoCounter];
     const nextPixelSize = `${512 / nextGridSize}px`;
 
-    sizeSliderDisplay.textContent = `${sizeSlider.value} x ${sizeSlider.value}`;
+    updateSlider(nextGridSize);
 
     createGrid(nextGridSize, nextPixelSize, false, nextRedo);
 
     undoCounter++;
-    console.log(`   undoCounter:  ${undoCounter}`);
-    console.log(`undoCounterMax:  ${undoCounterMax}`);
+}
+
+
+
+
+// update slider & display
+function updateSlider(newGridSize) {
+    sizeSliderDisplay.textContent = `${newGridSize} x ${newGridSize}`;
+    sizeSlider.value = newGridSize;
 }
 
 
@@ -246,12 +251,12 @@ clearBtn.addEventListener("click", () => {
 randomBtn.addEventListener("click", () => {
     if (isRandomColors == false) {
         isRandomColors = true;
-        randomBtn.style.backgroundColor = "yellow";
+        randomBtn.style.backgroundColor = buttonOnColor;
         randomBtn.textContent = "Random color mode ON";
     }
     else {
         isRandomColors = false;
-        randomBtn.style.backgroundColor = "#f0f0f0";
+        randomBtn.style.backgroundColor = buttonOffColor;
         randomBtn.textContent = "Random color mode OFF";
     }
 });
@@ -261,6 +266,29 @@ function randomColor() {
     currentColor = colors[i];
     updateColorCss(currentColor);
 }  
+
+
+
+// remove gridlines button
+gridlinesBtn.addEventListener("click", () => {
+    if (isGridlinesOn == false) {
+        isGridlinesOn = true;
+        gridlinesBtn.textContent = "Gridlines ON";
+        let pixels = document.querySelectorAll(".pixel");
+        pixels.forEach((pixel) => {
+            pixel.style.borderWidth = "1px";
+        });
+        
+    }
+    else {
+        isGridlinesOn = false;
+        gridlinesBtn.textContent = "Gridlines OFF";
+        let pixels = document.querySelectorAll(".pixel");
+        pixels.forEach((pixel) => {
+            pixel.style.borderWidth = "0px";
+        });
+    }
+});
 
 
 
@@ -277,4 +305,3 @@ function copyArray(arrayToCopy) {
     }
     return newArray;
 }
-
