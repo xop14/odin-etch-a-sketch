@@ -6,6 +6,7 @@ const clearBtn = document.querySelector("#clear-btn");
 const randomBtn = document.querySelector("#random-btn");
 const undoBtn = document.querySelector("#undo-btn");
 const canvasHistory = [];
+const gridSizeHistory = [];
 
 const body = document.body;
 
@@ -37,7 +38,7 @@ body.onmouseleave = () => {
 createGrid(gridSize, pixelSize);
 
 // create pixel grid
-function createGrid(gridSize, pixelSize) {
+function createGrid(gridSize, pixelSize, saveUndo = true) {
     const currentCanvas = [];
     //reset current grid
     grid.innerHTML = "";
@@ -80,18 +81,23 @@ function createGrid(gridSize, pixelSize) {
                 pixel.classList.remove("pixel-hover");
             });
             pixel.addEventListener("mouseup", () => {
-                saveCanvasUndo(currentCanvas);
+                saveCanvasUndo(currentCanvas, gridSize);
             });
             
             currentCanvasRow.push("white");
         }
         currentCanvas.push(currentCanvasRow);
     }
-    saveCanvasUndo(currentCanvas);
+    // When adjusting grid size for an undo, we don't want to save the state of the current canvas
+    // so the function is called with the saveUndo parameter set to false
+    if (saveUndo == true) {
+        saveCanvasUndo(currentCanvas, gridSize);
+    }
 }
 
-// save array to history
-function saveCanvasUndo(canvasArray) {
+
+// save current grid to undo history
+function saveCanvasUndo(canvasArray, gridSizeToSave) {
     const newCanvasUndo = [];
     for (let i = 0; i < canvasArray.length; i++) {
         let newCanvasUndoRow = [];
@@ -101,9 +107,10 @@ function saveCanvasUndo(canvasArray) {
         newCanvasUndo.push(newCanvasUndoRow);
     }
     canvasHistory.push(newCanvasUndo);
+    gridSizeHistory.push(gridSizeToSave);
 }
 
-// undo
+// undo history
 undoBtn.addEventListener("click", undo);
 
 function undo() {
@@ -113,20 +120,27 @@ function undo() {
         return;
     }
     console.log("HISTORY FOUND");
-    
+
     const lastUndo = canvasHistory[canvasHistory.length - 2];
+    const lastGridSize = gridSizeHistory[gridSizeHistory.length - 2];
+    const lastPixelSize = `${512 / lastGridSize}px`;
+    console.log(lastUndo);
+    console.log(lastGridSize);
+    console.log(lastPixelSize);
+    createGrid(lastGridSize, lastPixelSize, false);
+    sizeSliderDisplay.textContent = `${sizeSlider.value} x ${sizeSlider.value}`;
     
     for (let i = 0; i < lastUndo.length; i++) {
         for (let j = 0; j < lastUndo.length; j++) {
             document.querySelector(`#i${i}j${j}`).style.backgroundColor = lastUndo[i][j];
         }
     }
-
-    canvasHistory.pop();
+    if (canvasHistory.length > 1) {
+        canvasHistory.pop();
+        gridSizeHistory.pop();
+    }
+    console.log(canvasHistory);
 }
-
-
-
 
 // create color pallet
 colors.forEach((color) => {
@@ -141,6 +155,7 @@ colors.forEach((color) => {
     });
 });
 
+// sets the initial selected color to red
 updateColorCss("red");
 
 // update css
@@ -160,14 +175,19 @@ sizeSlider.addEventListener("input", () => {
     sizeSliderDisplay.textContent = `${sizeSlider.value} x ${sizeSlider.value}`;
     gridSize = sizeSlider.value;
     pixelSize = `${512 / gridSize}px`;
-    createGrid(gridSize, pixelSize); 
-})
+    createGrid(gridSize, pixelSize, false);
+});
+
+sizeSlider.addEventListener("change", () => {
+    createGrid(gridSize, pixelSize);
+});
 
 
 // clear button
 clearBtn.addEventListener("click", () => {
     createGrid(gridSize, pixelSize);
-})
+});
+
 
 // random color generator
 
