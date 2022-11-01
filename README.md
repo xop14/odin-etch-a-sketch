@@ -9,7 +9,7 @@ features
 * random colors
 - brush size
 * undo button (save current array to history array)
-- redo button
+* redo button
 - opacity
 - fill
 - put array into URL and have copy URL button
