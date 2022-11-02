@@ -282,6 +282,10 @@ clearBtn.addEventListener("click", () => {
 randomBtn.addEventListener("click", () => {
 
     if (isRandomColors == false) {
+        isRainbowColors = false;
+        rainbowBtn.style.backgroundColor = buttonOffColor;
+        rainbowBtn.textContent = "Rainbow mode OFF";
+        
         isRandomColors = true;
         randomBtn.style.backgroundColor = buttonOnColor;
         randomBtn.textContent = "Random color mode ON";
@@ -404,6 +408,10 @@ function removeBrushOutline() {
 rainbowBtn.addEventListener("click", () => {
 
     if (isRainbowColors == false) {
+        isRandomColors = false;
+        randomBtn.style.backgroundColor = buttonOffColor;
+        randomBtn.textContent = "Random color mode OFF";
+
         isRainbowColors = true;
         rainbowBtn.style.backgroundColor = buttonOnColor;
         rainbowBtn.textContent = "Rainbow mode ON";
