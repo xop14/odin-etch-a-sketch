@@ -10,16 +10,29 @@
 <body>
     <div id="grid"></div>
     <div id="color-selector"></div>
+
+    <div id="brush-sizes">
+        <button id="brush-btn-1" value="1">Brush 1x1</button>
+        <button id="brush-btn-3" value="3">Brush 3x3</button>
+        <button id="brush-btn-5" value="5">Brush 5x5</button>
+        <button id="brush-btn-7" value="7">Brush 7x7</button>
+        <button id="brush-btn-7" value="9">Brush 9x9</button>
+        <button id="brush-btn-7" value="11">Brush 11x11</button>
+    </div>
+
     <div id="size-slider-container">
         <h3 id="size-slider-display">16 x 16</h3>
-        <input id="size-slider" type="range" min="8" max="80" value="16" step="8">
+        <input id="size-slider" type="range" min="8" max="64" value="16" step="8">
     </div>
-    <button id="clear-btn">Clear</button>
-    <button id="undo-btn">Undo</button>
-    <button id="redo-btn">Redo</button>
-    <button id="random-btn">Random color mode OFF</button>
-    <button id="gridlines-btn">Gridlines ON</button>
-
+    <div>
+        <button id="clear-btn">Clear</button>
+        <button id="undo-btn">Undo</button>
+        <button id="redo-btn">Redo</button>
+    </div>
+    <div>
+        <button id="random-btn">Random color mode OFF</button>
+        <button id="gridlines-btn">Gridlines ON</button>
+    </div>
 
     <script type="module" src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
     <script src="./etch-a-sketch.js"></script>

@@ -11,6 +11,7 @@ const canvasHistory = [];
 const gridSizeHistory = [];
 const buttonOnColor = "yellow";
 const buttonOffColor = "#f0f0f0";
+const brushSizes = document.querySelector("#brush-sizes");
 
 const body = document.body;
 
@@ -20,11 +21,12 @@ let pixelSize = `${512 / gridSize}px`;
 let currentColor = "red";
 let colors = ["red", "orange", "yellow", "limegreen", "green", "blue", "skyblue", "purple", "deeppink", "brown", "black", "grey" ,"white"];
 let mouseDown = 0;
-let brushSize = 3;
 let isRandomColors = false;
 let undoCounter = 0;
 let undoCounterMax = 0;
 let isGridlinesOn = true;
+let randomCounter = 0;
+let brushSize = 1;
 
 let xPos = null;
 let yPos = null;
@@ -83,27 +85,43 @@ function createGrid(gridSize, pixelSize, saveUndo = true, canvasToLoad = []) {
             //pixel.textContent = i + " , " + j;
 
             pixel.addEventListener("mouseover", () => {
+                xPos = j;
+                yPos = i;
+                const brushPixels = createBrushPixels();
                 if (mouseDown) {
                     if (isRandomColors) {
                         randomColor();
                     }
-                    pixel.style.backgroundColor = currentColor;
-                    currentCanvas[i][j] = currentColor;
+                    brushPixels.forEach((brushPixel) => {
+                        document.querySelector(brushPixel).style.backgroundColor = currentColor;
+    
+                        // extract i & j from pixel id
+                        // use regex to split id at i and j and get their values
+                        let iBrushPixel = brushPixel.split(/[ij]/)[1];
+                        let jBrushPixel = brushPixel.split(/[ij]/)[2];
+                        currentCanvas[iBrushPixel][jBrushPixel] = currentColor;
+                    });
+
                 }
-                pixel.classList.add("pixel-hover");
-                xPos = j;
-                yPos = i;
-                //console.log("x: " + j + " y: " + i);
             });
             pixel.addEventListener("mousedown", () => {
                 if (isRandomColors) {
                     randomColor();
                 }
-                pixel.style.backgroundColor = currentColor;
-                currentCanvas[i][j] = currentColor;
+                createBrushPixels().forEach((brushPixel) => {
+                    document.querySelector(brushPixel).style.backgroundColor = currentColor;
+
+                    // extract i & j from pixel id
+                    // use regex to split id at i and j and get their values
+                    let iBrushPixel = brushPixel.split(/[ij]/)[1];
+                    let jBrushPixel = brushPixel.split(/[ij]/)[2];
+                    currentCanvas[iBrushPixel][jBrushPixel] = currentColor;
+                });
             });
+
+
             pixel.addEventListener("mouseout", () => {
-                pixel.classList.remove("pixel-hover");
+                removeBrushOutline();
             });
             pixel.addEventListener("mouseup", () => {
                 saveCanvasUndo(currentCanvas, gridSize);
@@ -249,6 +267,7 @@ clearBtn.addEventListener("click", () => {
 
 // random color generator
 randomBtn.addEventListener("click", () => {
+
     if (isRandomColors == false) {
         isRandomColors = true;
         randomBtn.style.backgroundColor = buttonOnColor;
@@ -269,7 +288,8 @@ function randomColor() {
 
 
 
-// remove gridlines button
+
+// gridlines toggle button
 gridlinesBtn.addEventListener("click", () => {
     if (isGridlinesOn == false) {
         isGridlinesOn = true;
@@ -304,4 +324,59 @@ function copyArray(arrayToCopy) {
         newArray.push(newArrayRow);
     }
     return newArray;
+}
+
+
+brushSizes.addEventListener("click", (e) => {
+    console.log(e.target);
+})
+
+
+function createBrushPixels() {
+    // floor just in case user enters even number
+    let spread = Math.floor((brushSize - 1) / 2);
+    const brushPixels = [];
+
+    for (let i = yPos - spread; i <= yPos + spread; i++) {
+        for(let j = xPos - spread; j <= xPos + spread; j++) {
+            if (i < 0 || i > gridSize -1 || j < 0 || j > gridSize - 1) {
+                continue;
+            }
+            //console.log(`Paint x: ${i} y: ${j}`)
+            //document.querySelector(`#i${i}j${j}`).style.backgroundColor = currentColor;
+            brushPixels.push(`#i${i}j${j}`);
+            // top pixels
+            if (i <= yPos - spread) {
+                document.querySelector(`#i${i}j${j}`).style.borderTopWidth = "3px";
+            }
+            // bottom pixels
+            if (i >= yPos + spread) {
+                document.querySelector(`#i${i}j${j}`).style.borderBottomWidth = "3px";
+            }
+            // left pixels
+            if (j <= xPos - spread) {
+                document.querySelector(`#i${i}j${j}`).style.borderLeftWidth = "3px";
+            }
+            // bottom pixels
+            if (j >= xPos + spread) {
+                document.querySelector(`#i${i}j${j}`).style.borderRightWidth = "3px";
+            }
+        }
+    }
+    //console.table(brushPixels);
+    return brushPixels;
+
+}
+
+
+function removeBrushOutline() {
+    // reset border
+    let pixels = document.querySelectorAll(".pixel");
+    pixels.forEach((pixel) => {
+        if (isGridlinesOn) {
+            pixel.style.borderWidth = "1px";
+        } else {
+            pixel.style.borderWidth = "0px";
+        }
+    });
 }
