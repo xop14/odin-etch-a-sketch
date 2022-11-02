@@ -10,8 +10,8 @@ const redoBtn = document.querySelector("#redo-btn");
 const gridlinesBtn = document.querySelector("#gridlines-btn");
 const canvasHistory = [];
 const gridSizeHistory = [];
-const buttonOnColor = "yellow";
-const buttonOffColor = "#f0f0f0";
+const buttonOnColor = "#666";
+const buttonOffColor = "#333";
 const brushSizes = document.querySelector("#brush-sizes");
 
 const body = document.body;
@@ -20,7 +20,7 @@ const body = document.body;
 let gridSize = 16;
 let pixelSize = `${512 / gridSize}px`;
 let currentColor = "red";
-let colors = ["red", "orange", "yellow", "limegreen", "green", "blue", "skyblue", "purple", "deeppink", "brown", "black", "grey" ,"white"];
+let colors = ["red", "orange", "gold", "yellow", "yellowgreen", "green", "lightseagreen", "darkturquoise", "lightskyblue", "deepskyblue", "blue" ,"purple", "deeppink", "plum" ,"pink", "bisque" , "brown", "black", "grey" ,"white"];
 let mouseDown = 0;
 let isRandomColors = false;
 let isRainbowColors = false;
@@ -285,15 +285,15 @@ randomBtn.addEventListener("click", () => {
         isRainbowColors = false;
         rainbowBtn.style.backgroundColor = buttonOffColor;
         rainbowBtn.textContent = "Rainbow mode OFF";
-        
+
         isRandomColors = true;
         randomBtn.style.backgroundColor = buttonOnColor;
-        randomBtn.textContent = "Random color mode ON";
+        randomBtn.textContent = "Random mode ON";
     }
     else {
         isRandomColors = false;
         randomBtn.style.backgroundColor = buttonOffColor;
-        randomBtn.textContent = "Random color mode OFF";
+        randomBtn.textContent = "Random mode OFF";
     }
 });
 
@@ -307,22 +307,30 @@ function randomColor() {
 
 
 // gridlines toggle button
+
+gridlinesBtn.style.backgroundColor = buttonOnColor;
+
 gridlinesBtn.addEventListener("click", () => {
     if (isGridlinesOn == false) {
         isGridlinesOn = true;
         gridlinesBtn.textContent = "Gridlines ON";
+        gridlinesBtn.style.backgroundColor = buttonOnColor;
         let pixels = document.querySelectorAll(".pixel");
         pixels.forEach((pixel) => {
             pixel.style.borderWidth = "1px";
+            pixel.style.borderColor = "#0002"
         });
+
         
     }
     else {
         isGridlinesOn = false;
         gridlinesBtn.textContent = "Gridlines OFF";
+        gridlinesBtn.style.backgroundColor = buttonOffColor;
         let pixels = document.querySelectorAll(".pixel");
         pixels.forEach((pixel) => {
             pixel.style.borderWidth = "0px";
+            pixel.style.borderColor = "#0000";
         });
     }
 });
@@ -410,12 +418,12 @@ rainbowBtn.addEventListener("click", () => {
     if (isRainbowColors == false) {
         isRandomColors = false;
         randomBtn.style.backgroundColor = buttonOffColor;
-        randomBtn.textContent = "Random color mode OFF";
+        randomBtn.textContent = "Random mode OFF";
 
         isRainbowColors = true;
         rainbowBtn.style.backgroundColor = buttonOnColor;
         rainbowBtn.textContent = "Rainbow mode ON";
-        currentColor = "rgba(255,0,0,255)"
+        currentColor = "rgba(255,0,0)"
     }
     else {
         isRainbowColors = false;
@@ -430,7 +438,6 @@ function rainbowColors() {
     let red = parseInt(currentColor.split(/[(,)]/)[1]);
     let green = parseInt(currentColor.split(/[(,)]/)[2]);
     let blue = parseInt(currentColor.split(/[(,)]/)[3]);
-    let opacity = parseInt(currentColor.split(/[(,)]/)[4]);
 
 
     if (red == 255 && green == 0 && blue == 0) {
@@ -467,7 +474,7 @@ function rainbowColors() {
     blue = blue + blueSpeed;
     green = green +greenSpeed;
 
-    let newColor = `rgba(${red},${green},${blue},${opacity})`;
-    console.log(newColor);
+    let newColor = `rgba(${red},${green},${blue})`;
+    //console.log(newColor);
     currentColor = newColor;
 }

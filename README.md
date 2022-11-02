@@ -8,10 +8,10 @@ features
 * choose color
 * random colors
 * rainbow mode
-- gradually changing colors
 * brush size
 * undo button (save current array to history array)
 * redo button
+* download image buttons
 - opacity
 - fill
 - put array into URL and have copy URL button

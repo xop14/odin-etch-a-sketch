@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.js"></script>
     <title>Etch-a-sketch</title>
 </head>
 <body>
@@ -34,8 +35,33 @@
         <button id="random-btn">Random mode OFF</button>
         <button id="gridlines-btn">Gridlines ON</button>
     </div>
+    <div>
+        <button onclick="downloadPNG()">Download as PNG</button>
+        <button onclick="downloadJPEG()">Download as JPEG</button>
+    </div>
+    <div id="screenshots"></div>
 
-    <script type="module" src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
     <script src="./etch-a-sketch.js"></script>
+
+    <script>
+        function downloadPNG() {
+            html2canvas(document.querySelector("#grid")).then(function(canvas) {
+                const link = document.createElement("a");
+                link.download = "pixel-art.png";
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        function downloadJPEG() {
+            html2canvas(document.querySelector("#grid")).then(function(canvas) {
+                const link = document.createElement("a");
+                link.download = "pixel-art.jpg";
+                link.href = canvas.toDataURL('image/jpeg');
+                link.click();
+            });
+        }
+    </script>
+
 </body>
 </html>
