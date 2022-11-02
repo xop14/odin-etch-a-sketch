@@ -4,6 +4,7 @@ const sizeSlider = document.querySelector("#size-slider");
 const sizeSliderDisplay = document.querySelector("#size-slider-display");
 const clearBtn = document.querySelector("#clear-btn");
 const randomBtn = document.querySelector("#random-btn");
+const rainbowBtn = document.querySelector("#rainbow-btn");
 const undoBtn = document.querySelector("#undo-btn");
 const redoBtn = document.querySelector("#redo-btn");
 const gridlinesBtn = document.querySelector("#gridlines-btn");
@@ -22,11 +23,15 @@ let currentColor = "red";
 let colors = ["red", "orange", "yellow", "limegreen", "green", "blue", "skyblue", "purple", "deeppink", "brown", "black", "grey" ,"white"];
 let mouseDown = 0;
 let isRandomColors = false;
+let isRainbowColors = false;
 let undoCounter = 0;
 let undoCounterMax = 0;
 let isGridlinesOn = true;
 let randomCounter = 0;
 let brushSize = 1;
+let redSpeed = 0;
+let greenSpeed = 0;
+let blueSpeed = 0;
 
 let xPos = null;
 let yPos = null;
@@ -92,6 +97,9 @@ function createGrid(gridSize, pixelSize, saveUndo = true, canvasToLoad = []) {
                     if (isRandomColors) {
                         randomColor();
                     }
+                    if (isRainbowColors){
+                        rainbowColors();
+                    }
                     brushPixels.forEach((brushPixel) => {
                         document.querySelector(brushPixel).style.backgroundColor = currentColor;
     
@@ -107,6 +115,9 @@ function createGrid(gridSize, pixelSize, saveUndo = true, canvasToLoad = []) {
             pixel.addEventListener("mousedown", () => {
                 if (isRandomColors) {
                     randomColor();
+                }
+                if (isRainbowColors){
+                    rainbowColors();
                 }
                 createBrushPixels().forEach((brushPixel) => {
                     document.querySelector(brushPixel).style.backgroundColor = currentColor;
@@ -220,8 +231,10 @@ colors.forEach((color) => {
     colorBox.setAttribute('id', color);
     colorBox.className = 'color';
     colorBox.addEventListener("click", () => {
-        currentColor = color;
-        updateColorCss(currentColor);
+        if (!isRainbowColors) {
+            currentColor = color;
+            updateColorCss(currentColor);
+        }
     });
 });
 
@@ -328,7 +341,7 @@ function copyArray(arrayToCopy) {
 
 
 brushSizes.addEventListener("click", (e) => {
-    console.log(e.target);
+    brushSize = e.target.value;
 })
 
 
@@ -379,4 +392,74 @@ function removeBrushOutline() {
             pixel.style.borderWidth = "0px";
         }
     });
+}
+
+
+
+
+
+// rainbow mode
+
+// random color generator
+rainbowBtn.addEventListener("click", () => {
+
+    if (isRainbowColors == false) {
+        isRainbowColors = true;
+        rainbowBtn.style.backgroundColor = buttonOnColor;
+        rainbowBtn.textContent = "Rainbow mode ON";
+        currentColor = "rgba(255,0,0,255)"
+    }
+    else {
+        isRainbowColors = false;
+        rainbowBtn.style.backgroundColor = buttonOffColor;
+        rainbowBtn.textContent = "Rainbow mode OFF";
+    }
+});
+
+// gradually change color 
+function rainbowColors() {
+
+    let red = parseInt(currentColor.split(/[(,)]/)[1]);
+    let green = parseInt(currentColor.split(/[(,)]/)[2]);
+    let blue = parseInt(currentColor.split(/[(,)]/)[3]);
+    let opacity = parseInt(currentColor.split(/[(,)]/)[4]);
+
+
+    if (red == 255 && green == 0 && blue == 0) {
+        redSpeed = 0;
+        greenSpeed = 5;
+        blueSpeed = 0;
+    } 
+    else if (red == 255 && green == 255 && blue == 0) {
+        redSpeed = -5;
+        greenSpeed = 0;
+        blueSpeed = 0;
+    } 
+    else if (red == 0 && green == 255 && blue == 0) {
+        redSpeed = 0;
+        greenSpeed = 0;
+        blueSpeed = 5;
+    } 
+    else if (red == 0 && green == 255 && blue == 255) {
+        redSpeed = 0;
+        greenSpeed = -5;
+        blueSpeed = 0;
+    } 
+    else if (red == 0 && green == 0 && blue == 255) {
+        redSpeed = 5;
+        greenSpeed = 0;
+        blueSpeed = 0;
+    } 
+    else if (red == 255 && green == 0 && blue == 255) {
+        redSpeed = 0;
+        greenSpeed = 0;
+        blueSpeed = -5;
+    } 
+    red = red + redSpeed;
+    blue = blue + blueSpeed;
+    green = green +greenSpeed;
+
+    let newColor = `rgba(${red},${green},${blue},${opacity})`;
+    console.log(newColor);
+    currentColor = newColor;
 }

@@ -7,8 +7,9 @@ features
 * change grid size
 * choose color
 * random colors
+* rainbow mode
 - gradually changing colors
-- brush size
+* brush size
 * undo button (save current array to history array)
 * redo button
 - opacity
