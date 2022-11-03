@@ -5,6 +5,7 @@ const sizeSliderDisplay = document.querySelector("#size-slider-display");
 const clearBtn = document.querySelector("#clear-btn");
 const randomBtn = document.querySelector("#random-btn");
 const rainbowBtn = document.querySelector("#rainbow-btn");
+const fillBtn = document.querySelector("#fill-btn");
 const undoBtn = document.querySelector("#undo-btn");
 const redoBtn = document.querySelector("#redo-btn");
 const gridlinesBtn = document.querySelector("#gridlines-btn");
@@ -24,6 +25,7 @@ let colors = ["red", "orange", "gold", "yellow", "yellowgreen", "green", "lights
 let mouseDown = 0;
 let isRandomColors = false;
 let isRainbowColors = false;
+let isFill = false;
 let undoCounter = 0;
 let undoCounterMax = 0;
 let isGridlinesOn = true;
@@ -119,6 +121,11 @@ function createGrid(gridSize, pixelSize, saveUndo = true, canvasToLoad = []) {
                 if (isRainbowColors){
                     rainbowColors();
                 }
+                if (isFill && currentCanvas[yPos][xPos] !== currentColor) {
+                    fill(xPos, yPos, currentCanvas[yPos][xPos], currentCanvas);
+                    createGrid(gridSize, pixelSize, false, currentCanvas);
+                }
+                
                 createBrushPixels().forEach((brushPixel) => {
                     document.querySelector(brushPixel).style.backgroundColor = currentColor;
 
@@ -478,3 +485,94 @@ function rainbowColors() {
     //console.log(newColor);
     currentColor = newColor;
 }
+
+
+// fill tool
+
+fillBtn.addEventListener("click", () => {
+
+    if (isFill == false) {
+        isFill = true;
+        fillBtn.style.backgroundColor = buttonOnColor;
+        fillBtn.textContent = "Fill ON";
+    }
+    else {
+        isFill = false;
+        fillBtn.style.backgroundColor = buttonOffColor;
+        fillBtn.textContent = "Fill OFF";
+    }
+});
+
+
+let fillCounter = 0;
+
+
+function fill(x, y, pixelColor, currentCanvas) {
+
+
+    // top
+    if (y > 0 && currentCanvas[y - 1][x] == pixelColor) {
+        currentCanvas[y - 1][x] = currentColor;
+        fill(x, y - 1, pixelColor, currentCanvas);
+    }
+    
+    //right
+    if (x < (gridSize - 1) && currentCanvas[y][x + 1] == pixelColor) {
+        currentCanvas[y][x + 1] = currentColor;
+        fill(x + 1, y, pixelColor, currentCanvas);
+    }
+    
+    // bottom
+    if (y < (gridSize - 1) && currentCanvas[y + 1][x] == pixelColor) {
+        currentCanvas[y + 1][x] = currentColor;
+        fill(x, y + 1, pixelColor, currentCanvas);
+    }
+
+    // left
+    if (x > 0 && currentCanvas[y][x - 1] == pixelColor) {
+        currentCanvas[y][x - 1] = currentColor;
+        fill(x - 1, y, pixelColor, currentCanvas);
+    }
+    else {
+        return;
+    }
+
+    fillCounter++;
+    console.log(fillCounter);
+}
+
+
+
+// function fill(x, y, pixelColor, currentCanvas) {
+
+//     // top
+//     if (y > 0 && currentCanvas[y - 1][x] == pixelColor) {
+//         currentCanvas[y - 1][x] = currentColor;
+//         fill(x, y - 1, pixelColor, currentCanvas);
+//     }
+    
+//     //right
+//     if (x < (gridSize - 1) && currentCanvas[y][x + 1] == pixelColor) {
+//         currentCanvas[y][x + 1] = currentColor;
+//         fill(x + 1, y, pixelColor, currentCanvas);
+//     }
+    
+//     // bottom
+//     if (y < (gridSize - 1) && currentCanvas[y + 1][x] == pixelColor) {
+//         currentCanvas[y + 1][x] = currentColor;
+//         fill(x, y + 1, pixelColor, currentCanvas);
+//     }
+
+//     // left
+//     if (x > 0 && currentCanvas[y][x - 1] == pixelColor) {
+//         currentCanvas[y][x - 1] = currentColor;
+//         fill(x - 1, y, pixelColor, currentCanvas);
+//     }
+//     else {
+//         return;
+//     }
+
+//     fillCounter++;
+//     console.log(fillCounter);
+//     createGrid(gridSize, pixelSize, false, currentCanvas);
+// }

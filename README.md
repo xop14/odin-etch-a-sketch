@@ -11,6 +11,7 @@ features
 * brush size
 * undo button (save current array to history array)
 * redo button
+- undo/redo keyboard shortcuts
 * download image buttons
 - opacity
 - fill
