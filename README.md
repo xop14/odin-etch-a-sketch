@@ -11,10 +11,11 @@ features
 * brush size
 * undo button (save current array to history array)
 * redo button
-- undo/redo keyboard shortcuts
+* undo/redo keyboard shortcuts
 * download image buttons
+* fill
 - opacity
-- fill
+- add custom colors
 - put array into URL and have copy URL button
 - double click on color to change the color
 - remove gridlines button
