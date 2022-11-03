@@ -24,11 +24,12 @@ body {
     display: flex;
     flex-wrap: wrap;
     flex: 0;
+    gap: 0px;
 
 }
 
 #grid > div {
-    border: 0px solid #0002;
+    border: 1px solid #0002;
     display: flex;
     justify-content:center;
     align-items: center;

@@ -46,7 +46,9 @@
 
     <script>
         function downloadPNG() {
-            html2canvas(document.querySelector("#grid")).then(function(canvas) {
+            html2canvas(document.querySelector("#grid"), {
+                scale: 1
+            }).then(function(canvas) {
                 const link = document.createElement("a");
                 link.download = "pixel-art.png";
                 link.href = canvas.toDataURL('image/png');
@@ -55,7 +57,9 @@
         }
 
         function downloadJPEG() {
-            html2canvas(document.querySelector("#grid")).then(function(canvas) {
+            html2canvas(document.querySelector("#grid"), {
+                scale: 1
+            }).then(function(canvas) {
                 const link = document.createElement("a");
                 link.download = "pixel-art.jpg";
                 link.href = canvas.toDataURL('image/jpeg');

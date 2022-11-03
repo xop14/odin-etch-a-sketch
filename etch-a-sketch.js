@@ -11,7 +11,7 @@ const redoBtn = document.querySelector("#redo-btn");
 const gridlinesBtn = document.querySelector("#gridlines-btn");
 const canvasHistory = [];
 const gridSizeHistory = [];
-const buttonOnColor = "#666";
+const buttonOnColor = "#888";
 const buttonOffColor = "#333";
 const brushSizes = document.querySelector("#brush-sizes");
 
@@ -94,7 +94,10 @@ function createGrid(gridSize, pixelSize, saveUndo = true, canvasToLoad = []) {
             pixel.addEventListener("mouseover", () => {
                 xPos = j;
                 yPos = i;
+
+                // returns an array of pixels
                 const brushPixels = createBrushPixels();
+                
                 if (mouseDown) {
                     if (isRandomColors) {
                         randomColor();
@@ -234,7 +237,7 @@ document.onkeydown = (e) => {
 
 
 
-// update slider & display
+// update grid size slider & display
 function updateSlider(newGridSize) {
     sizeSliderDisplay.textContent = `${newGridSize} x ${newGridSize}`;
     sizeSlider.value = newGridSize;
@@ -372,6 +375,10 @@ function copyArray(arrayToCopy) {
 }
 
 
+
+
+// brush pixels returns an array of pixels to be colored in
+
 brushSizes.addEventListener("click", (e) => {
     brushSize = e.target.value;
 })
@@ -387,28 +394,28 @@ function createBrushPixels() {
             if (i < 0 || i > gridSize -1 || j < 0 || j > gridSize - 1) {
                 continue;
             }
-            //console.log(`Paint x: ${i} y: ${j}`)
-            //document.querySelector(`#i${i}j${j}`).style.backgroundColor = currentColor;
             brushPixels.push(`#i${i}j${j}`);
+
+            let borderStyle = "3px solid #0002";
+
             // top pixels
             if (i <= yPos - spread) {
-                document.querySelector(`#i${i}j${j}`).style.borderTopWidth = "3px";
+                document.querySelector(`#i${i}j${j}`).style.borderTop = borderStyle;
             }
             // bottom pixels
             if (i >= yPos + spread) {
-                document.querySelector(`#i${i}j${j}`).style.borderBottomWidth = "3px";
+                document.querySelector(`#i${i}j${j}`).style.borderBottom = borderStyle;
             }
             // left pixels
             if (j <= xPos - spread) {
-                document.querySelector(`#i${i}j${j}`).style.borderLeftWidth = "3px";
+                document.querySelector(`#i${i}j${j}`).style.borderLeft = borderStyle;
             }
             // bottom pixels
             if (j >= xPos + spread) {
-                document.querySelector(`#i${i}j${j}`).style.borderRightWidth = "3px";
+                document.querySelector(`#i${i}j${j}`).style.borderRight = borderStyle;
             }
         }
     }
-    //console.table(brushPixels);
     return brushPixels;
 
 }
