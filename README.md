@@ -15,9 +15,8 @@ features
 * download image buttons
 * fill
 * remove gridlines button
+* custom color picker
+* add/remove custom colors
+* alternate tag on color hover
 - warning if leaving or refreshing page
 - opacity
-- add custom colors
-- double click on color to change the color
-- preview fill area
-- 

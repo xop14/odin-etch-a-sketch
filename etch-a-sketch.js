@@ -1,5 +1,5 @@
 const grid = document.querySelector("#grid");
-const colorSelector = document.querySelector("#color-selector");
+const colorPalette = document.querySelector("#color-palette");
 const brushSlider = document.querySelector("#brush-slider");
 const brushSliderDisplay = document.querySelector("#brush-slider-display");
 const gridSlider = document.querySelector("#grid-slider");
@@ -20,14 +20,15 @@ const toolColorUnavailable = "#555";
 const tools = document.querySelectorAll(".tool");
 const btns = document.querySelectorAll(".btn");
 const modeBtns = document.querySelectorAll(".mode-btn");
+const colorPicker = document.querySelector("#color-picker");
 
 const body = document.body;
 
 
 let gridSize = 16;
 let pixelSize = `${512 / gridSize}px`;
-let currentColor = "red";
-let colors = ["red", "orange", "gold", "yellow", "yellowgreen", "green", "lightseagreen", "darkturquoise", "lightskyblue", "deepskyblue", "blue" ,"purple", "deeppink", "plum" ,"pink", "bisque" , "brown", "black", "grey" ,"white"];
+let currentColor = "#FF0000";
+let colors = ["#FF0000", "#F2A93B", "#FFFF54", "#A5CC4F", "#377E22", "#42C5D7", "#075EBB" ,"#8C00FF", "#6B0E71", "#DE179F", "#FFADAD", "#FBE5C8" , "#712C0E", "#000000", "#666666", "#CCCCCC" ,"#FFFFFF"];
 let mouseDown = 0;
 let isRandomColors = false;
 let isRainbowColors = false;
@@ -155,7 +156,7 @@ function createGrid(gridSize, pixelSize, saveUndo = true, canvasToLoad = []) {
                 undoRedoStyleUpdate();
             });
             if (!isCanvasImported) {
-                currentCanvasRow.push("white");
+                currentCanvasRow.push("#FFFFFF");
             }
         }
         if (!isCanvasImported){
@@ -251,54 +252,78 @@ function redo() {
 
 document.onkeydown = (e) => {
     if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.code == "KeyZ") {
-        console.log("CMD + SHIFT + Z");
         redo();
     }
     else if ((e.metaKey || e.ctrlKey) && e.code == "KeyZ") {
-        console.log("CMD + Z");
         undo();
     }
 }
 
 
 
-// update grid size slider & display
-function updateSlider(newGridSize) {
-    gridSliderDisplay.textContent = `${newGridSize} x ${newGridSize}`;
-    gridSlider.value = newGridSize;
+
+
+// create color pallet from colors array
+
+createColorPalette(colors);
+
+function createColorPalette(colors) {
+    colorPalette.innerHTML = "";
+
+    colors.forEach((color) => {
+        const colorBox = document.createElement("div");
+        colorBox.style.backgroundColor = color;
+        colorPalette.append(colorBox);
+        colorBox.setAttribute('id', color);
+        colorBox.setAttribute("title", color)
+        colorBox.className = 'color';
+        colorBox.addEventListener("click", () => {
+            if (!isRainbowColors) {
+                currentColor = color;
+                colorPicker.value = currentColor;
+                //updateColorCss(currentColor);
+            }
+        });
+    });
+    
+    // append add custom color button
+    const addColorBtn = document.createElement("div");
+    addColorBtn.setAttribute("class", "add-color-button");
+    addColorBtn.setAttribute("id", "add-color-button");
+    addColorBtn.setAttribute("title", "Add current color to palette")
+    addColorBtn.innerText = "+";
+    colorPalette.append(addColorBtn);
+    addColorBtn.addEventListener("click", (e) => {
+        console.log("Add custom color");
+        // add new color to array
+        if (colors.length >= 39) {
+            console.log("Readched color limit");
+        }
+        else if (colors.includes(currentColor)) {
+            console.log("ALEADY IN ARRAY");
+        } else {
+            colors.push(currentColor);
+            createColorPalette(colors);
+
+        }
+
+    });
+}
+
+// current color display
+function displayCurrentColor() {
+    colorPicker.value = currentColor;
 }
 
 
+// update current color using colorpicker
 
-
-// create color pallet
-colors.forEach((color) => {
-    const colorBox = document.createElement("div");
-    colorBox.style.backgroundColor = color;
-    colorSelector.append(colorBox);
-    colorBox.setAttribute('id', color);
-    colorBox.className = 'color';
-    colorBox.addEventListener("click", () => {
-        if (!isRainbowColors) {
-            currentColor = color;
-            updateColorCss(currentColor);
-        }
-    });
+colorPicker.addEventListener("input", (e) => {
+    currentColor = e.target.value; 
 });
 
-// sets the initial selected color to red
-updateColorCss("red");
 
-// update css
-function updateColorCss(currentColor) {
-    //update css
-    const currentColorDiv = document.querySelector(`#${currentColor}`);
-    const colorsTemp = document.querySelectorAll(".color");
-    colorsTemp.forEach((colorTemp) => {
-        colorTemp.classList.remove("color-selected");
-    });
-    currentColorDiv.classList.add("color-selected");
-}
+
 
 
 // brush size adjustment
@@ -320,7 +345,6 @@ gridSlider.addEventListener("input", () => {
 gridSlider.addEventListener("change", () => {
     createGrid(gridSize, pixelSize);
 });
-
 
 
 
@@ -348,7 +372,8 @@ randomBtn.addEventListener("click", () => {
 function randomColor() {
     let i = Math.floor(Math.random() * (colors.length - 3));
     currentColor = colors[i];
-    updateColorCss(currentColor);
+    colorPicker.value = currentColor;
+    //updateColorCss(currentColor);
 }  
 
 
@@ -606,18 +631,22 @@ modeBtns.forEach((modeBtn) => {
 
 btns.forEach((btn) => {
     btn.addEventListener("mousedown", (e) => {
-        console.log("MOUSE DOWN");
         btn.style.transitionDuration = "0s";
         btn.style.color = toolColorOn;
     })
     btn.addEventListener("mouseup", (e) => {
-        console.log("MOUSE UP");
         btn.style.transitionDuration = "0.2s";
         btn.style.color = toolColorOff;
     })
 
     btn.addEventListener("mouseout", (e) => {
-        console.log("MOUSE OUT");
         btn.style.color = toolColorOff;
     })
 });
+
+// update grid size slider & display
+function updateSlider(newGridSize) {
+    gridSliderDisplay.textContent = `${newGridSize} x ${newGridSize}`;
+    gridSlider.value = newGridSize;
+}
+
