@@ -14,8 +14,10 @@ features
 * undo/redo keyboard shortcuts
 * download image buttons
 * fill
+* remove gridlines button
+- warning if leaving or refreshing page
 - opacity
 - add custom colors
-- put array into URL and have copy URL button
 - double click on color to change the color
-- remove gridlines button
+- preview fill area
+- 

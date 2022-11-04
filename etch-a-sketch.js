@@ -1,19 +1,25 @@
 const grid = document.querySelector("#grid");
 const colorSelector = document.querySelector("#color-selector");
-const sizeSlider = document.querySelector("#size-slider");
-const sizeSliderDisplay = document.querySelector("#size-slider-display");
+const brushSlider = document.querySelector("#brush-slider");
+const brushSliderDisplay = document.querySelector("#brush-slider-display");
+const gridSlider = document.querySelector("#grid-slider");
+const gridSliderDisplay = document.querySelector("#grid-slider-display");
 const clearBtn = document.querySelector("#clear-btn");
 const randomBtn = document.querySelector("#random-btn");
 const rainbowBtn = document.querySelector("#rainbow-btn");
-const fillBtn = document.querySelector("#fill-btn");
+const brushTool = document.querySelector("#brush-tool");
+const fillTool = document.querySelector("#fill-tool");
 const undoBtn = document.querySelector("#undo-btn");
 const redoBtn = document.querySelector("#redo-btn");
 const gridlinesBtn = document.querySelector("#gridlines-btn");
 const canvasHistory = [];
 const gridSizeHistory = [];
-const buttonOnColor = "#888";
-const buttonOffColor = "#333";
-const brushSizes = document.querySelector("#brush-sizes");
+const toolColorOn = "goldenrod";
+const toolColorOff = "#fff9";
+const toolColorUnavailable = "#555";
+const tools = document.querySelectorAll(".tool");
+const btns = document.querySelectorAll(".btn");
+const modeBtns = document.querySelectorAll(".mode-btn");
 
 const body = document.body;
 
@@ -146,6 +152,7 @@ function createGrid(gridSize, pixelSize, saveUndo = true, canvasToLoad = []) {
             });
             pixel.addEventListener("mouseup", () => {
                 saveCanvasUndo(currentCanvas, gridSize);
+                undoRedoStyleUpdate();
             });
             if (!isCanvasImported) {
                 currentCanvasRow.push("white");
@@ -197,8 +204,25 @@ function undo() {
     createGrid(lastGridSize, lastPixelSize, false, lastUndo);
 
     undoCounter--;
+    undoRedoStyleUpdate();
 }
 
+
+undoRedoStyleUpdate();
+
+function undoRedoStyleUpdate() {
+    if (undoCounter <= 1) {
+        undoBtn.style.color = toolColorUnavailable;
+    } else {
+        undoBtn.style.color = toolColorOff;
+    }
+
+    if (undoCounter >= undoCounterMax) {
+        redoBtn.style.color = toolColorUnavailable;
+    } else {
+        redoBtn.style.color = toolColorOff;
+    }
+}
 
 
 
@@ -219,6 +243,7 @@ function redo() {
     createGrid(nextGridSize, nextPixelSize, false, nextRedo);
 
     undoCounter++;
+    undoRedoStyleUpdate();
 }
 
 
@@ -239,8 +264,8 @@ document.onkeydown = (e) => {
 
 // update grid size slider & display
 function updateSlider(newGridSize) {
-    sizeSliderDisplay.textContent = `${newGridSize} x ${newGridSize}`;
-    sizeSlider.value = newGridSize;
+    gridSliderDisplay.textContent = `${newGridSize} x ${newGridSize}`;
+    gridSlider.value = newGridSize;
 }
 
 
@@ -276,17 +301,23 @@ function updateColorCss(currentColor) {
 }
 
 
+// brush size adjustment
+brushSlider.addEventListener("input", () => {
+    brushSliderDisplay.textContent = `${brushSlider.value}px`;
+    brushSize = brushSlider.value;
+});
+
 
 
 // grid size adjustment
-sizeSlider.addEventListener("input", () => {
-    sizeSliderDisplay.textContent = `${sizeSlider.value} x ${sizeSlider.value}`;
-    gridSize = sizeSlider.value;
+gridSlider.addEventListener("input", () => {
+    gridSliderDisplay.textContent = `${gridSlider.value} x ${gridSlider.value}`;
+    gridSize = gridSlider.value;
     pixelSize = `${512 / gridSize}px`;
     createGrid(gridSize, pixelSize, false);
 });
 
-sizeSlider.addEventListener("change", () => {
+gridSlider.addEventListener("change", () => {
     createGrid(gridSize, pixelSize);
 });
 
@@ -306,17 +337,11 @@ randomBtn.addEventListener("click", () => {
 
     if (isRandomColors == false) {
         isRainbowColors = false;
-        rainbowBtn.style.backgroundColor = buttonOffColor;
-        rainbowBtn.textContent = "Rainbow mode OFF";
 
         isRandomColors = true;
-        randomBtn.style.backgroundColor = buttonOnColor;
-        randomBtn.textContent = "Random mode ON";
     }
     else {
         isRandomColors = false;
-        randomBtn.style.backgroundColor = buttonOffColor;
-        randomBtn.textContent = "Random mode OFF";
     }
 });
 
@@ -325,40 +350,6 @@ function randomColor() {
     currentColor = colors[i];
     updateColorCss(currentColor);
 }  
-
-
-
-
-// gridlines toggle button
-
-gridlinesBtn.style.backgroundColor = buttonOnColor;
-
-gridlinesBtn.addEventListener("click", () => {
-    if (isGridlinesOn == false) {
-        isGridlinesOn = true;
-        gridlinesBtn.textContent = "Gridlines ON";
-        gridlinesBtn.style.backgroundColor = buttonOnColor;
-        let pixels = document.querySelectorAll(".pixel");
-        pixels.forEach((pixel) => {
-            pixel.style.borderWidth = "1px";
-            pixel.style.borderColor = "#0002"
-        });
-
-        
-    }
-    else {
-        isGridlinesOn = false;
-        gridlinesBtn.textContent = "Gridlines OFF";
-        gridlinesBtn.style.backgroundColor = buttonOffColor;
-        let pixels = document.querySelectorAll(".pixel");
-        pixels.forEach((pixel) => {
-            pixel.style.borderWidth = "0px";
-            pixel.style.borderColor = "#0000";
-        });
-    }
-});
-
-
 
 
 // copy array function
@@ -373,15 +364,6 @@ function copyArray(arrayToCopy) {
     }
     return newArray;
 }
-
-
-
-
-// brush pixels returns an array of pixels to be colored in
-
-brushSizes.addEventListener("click", (e) => {
-    brushSize = e.target.value;
-})
 
 
 function createBrushPixels() {
@@ -439,27 +421,21 @@ function removeBrushOutline() {
 
 // rainbow mode
 
-// random color generator
+// rainbow color generator
 rainbowBtn.addEventListener("click", () => {
 
     if (isRainbowColors == false) {
         isRandomColors = false;
-        randomBtn.style.backgroundColor = buttonOffColor;
-        randomBtn.textContent = "Random mode OFF";
 
         isRainbowColors = true;
-        rainbowBtn.style.backgroundColor = buttonOnColor;
-        rainbowBtn.textContent = "Rainbow mode ON";
         currentColor = "rgba(255,0,0)"
     }
     else {
         isRainbowColors = false;
-        rainbowBtn.style.backgroundColor = buttonOffColor;
-        rainbowBtn.textContent = "Rainbow mode OFF";
     }
 });
 
-// gradually change color 
+// rainbow mode 
 function rainbowColors() {
 
     let red = parseInt(currentColor.split(/[(,)]/)[1]);
@@ -507,23 +483,6 @@ function rainbowColors() {
 }
 
 
-// fill tool
-
-fillBtn.addEventListener("click", () => {
-
-    if (isFill == false) {
-        isFill = true;
-        fillBtn.style.backgroundColor = buttonOnColor;
-        fillBtn.textContent = "Fill ON";
-    }
-    else {
-        isFill = false;
-        fillBtn.style.backgroundColor = buttonOffColor;
-        fillBtn.textContent = "Fill OFF";
-    }
-});
-
-
 let fillCounter = 0;
 
 
@@ -558,3 +517,107 @@ function fill(x, y, pixelColor, currentCanvas) {
 
 
 
+// tool buttons change style
+tools.forEach((tool)=> {
+    tool.addEventListener("click", (e) => {
+        tools.forEach((tool) => {
+            // below is what happens to the other targets
+            tool.style.color = toolColorOff;
+        });
+        // below is what happens to the click target
+        e.target.style.color = toolColorOn;
+    });
+});
+
+
+// fill tool button specific settings
+let brushSizeTemp = brushSize;
+
+fillTool.addEventListener("click", () => {
+
+    if (isFill == false) {
+        isFill = true;
+        brushSizeTemp = brushSize;
+        brushSize = 1;
+    }
+    else {
+        isFill = false;
+    }
+});
+
+
+// brush tool button specific settings
+brushTool.style.color = toolColorOn;
+brushTool.addEventListener("click", () => {
+        isFill = false;
+        brushSize = brushSizeTemp;
+});
+
+
+// Grid button & grid creation
+
+gridlinesBtn.style.color = toolColorOn;
+    
+gridlinesBtn.addEventListener("click", (e) => {
+    if (isGridlinesOn == false) {
+        isGridlinesOn = true;
+        gridlinesBtn.style.color = toolColorOn;
+        // grid style on
+        let pixels = document.querySelectorAll(".pixel");
+        pixels.forEach((pixel) => {
+            pixel.style.borderWidth = "1px";
+            pixel.style.borderColor = "#0002"
+        });
+    }
+    else {
+        isGridlinesOn = false;
+        gridlinesBtn.style.color = toolColorOff;
+        // grid style off
+        let pixels = document.querySelectorAll(".pixel");
+        pixels.forEach((pixel) => {
+            pixel.style.borderWidth = "0px";
+            pixel.style.borderColor = "#0000";
+        });
+    }
+})
+
+
+// mode button styles (rainbow / random)
+// makes mode buttons exclusive and able to toggle
+modeBtns.forEach((modeBtn) => {
+    modeBtn.addEventListener("click", (e) => {
+        
+        // below is what happens to the click target
+        
+        if (e.target.style.color == toolColorOn) {
+            e.target.style.color = toolColorOff;
+        } else {
+            modeBtns.forEach((modeBtn) => {
+            // below is what happens to the other targets
+            modeBtn.style.color = toolColorOff;
+            });
+            e.target.style.color = toolColorOn;
+        }
+    })
+});
+
+
+// one-click button style settings
+
+btns.forEach((btn) => {
+    btn.addEventListener("mousedown", (e) => {
+        console.log("MOUSE DOWN");
+        btn.style.transitionDuration = "0s";
+        btn.style.color = toolColorOn;
+    })
+    btn.addEventListener("mouseup", (e) => {
+        console.log("MOUSE UP");
+        btn.style.transitionDuration = "0.2s";
+        btn.style.color = toolColorOff;
+    })
+
+    btn.addEventListener("mouseout", (e) => {
+        console.log("MOUSE OUT");
+        btn.style.color = toolColorOff;
+    })
+});
