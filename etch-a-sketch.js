@@ -1,5 +1,6 @@
 const grid = document.querySelector("#grid");
 const colorPalette = document.querySelector("#color-palette");
+const addRemoveBtns = document.querySelector("#add-remove-btns");
 const brushSlider = document.querySelector("#brush-slider");
 const brushSliderDisplay = document.querySelector("#brush-slider-display");
 const gridSlider = document.querySelector("#grid-slider");
@@ -12,6 +13,8 @@ const fillTool = document.querySelector("#fill-tool");
 const undoBtn = document.querySelector("#undo-btn");
 const redoBtn = document.querySelector("#redo-btn");
 const gridlinesBtn = document.querySelector("#gridlines-btn");
+const addColorBtn = document.querySelector("#add-color-btn");
+const removeColorBtn = document.querySelector("#remove-color-btn");
 const canvasHistory = [];
 const gridSizeHistory = [];
 const toolColorOn = "goldenrod";
@@ -21,18 +24,27 @@ const tools = document.querySelectorAll(".tool");
 const btns = document.querySelectorAll(".btn");
 const modeBtns = document.querySelectorAll(".mode-btn");
 const colorPicker = document.querySelector("#color-picker");
-
+const gridWidth = 512;
 const body = document.body;
 
 
-let gridSize = 16;
-let pixelSize = `${512 / gridSize}px`;
+// let gridSize = gridSlider.value;
+
+let gridMultiplier = gridSlider.value;
+// creates grid sizes of 2, 4, 8, 16, 32, 64
+let gridSize = 2**gridMultiplier;
+
+
+// let pixelSize = `${512 / gridSize}px`;
+let pixelSize = `${gridWidth/gridSize}px`;
+
 let currentColor = "#FF0000";
 let colors = ["#FF0000", "#F2A93B", "#FFFF54", "#A5CC4F", "#377E22", "#42C5D7", "#075EBB" ,"#8C00FF", "#6B0E71", "#DE179F", "#FFADAD", "#FBE5C8" , "#712C0E", "#000000", "#666666", "#CCCCCC" ,"#FFFFFF"];
 let mouseDown = 0;
 let isRandomColors = false;
 let isRainbowColors = false;
 let isFill = false;
+let isRemoveItem = false;
 let undoCounter = 0;
 let undoCounterMax = 0;
 let isGridlinesOn = true;
@@ -198,7 +210,7 @@ function undo() {
 
     const lastUndo = canvasHistory[undoCounter - 2];
     const lastGridSize = gridSizeHistory[undoCounter - 2];
-    const lastPixelSize = `${512 / lastGridSize}px`;
+    const lastPixelSize = `${gridWidth/gridSize}px`;
 
     updateSlider(lastGridSize);
 
@@ -237,7 +249,7 @@ function redo() {
     }
     const nextRedo = canvasHistory[undoCounter];
     const nextGridSize = gridSizeHistory[undoCounter];
-    const nextPixelSize = `${512 / nextGridSize}px`;
+    const nextPixelSize = `${gridWidth/gridSize}px`;
 
     updateSlider(nextGridSize);
 
@@ -259,10 +271,6 @@ document.onkeydown = (e) => {
     }
 }
 
-
-
-
-
 // create color pallet from colors array
 
 createColorPalette(colors);
@@ -275,40 +283,95 @@ function createColorPalette(colors) {
         colorBox.style.backgroundColor = color;
         colorPalette.append(colorBox);
         colorBox.setAttribute('id', color);
-        colorBox.setAttribute("title", color)
+        colorBox.setAttribute("title", color);
         colorBox.className = 'color';
         colorBox.addEventListener("click", () => {
-            if (!isRainbowColors) {
+            if (!(isRainbowColors || isRemoveItem)) {
                 currentColor = color;
                 colorPicker.value = currentColor;
                 //updateColorCss(currentColor);
             }
         });
     });
-    
-    // append add custom color button
-    const addColorBtn = document.createElement("div");
-    addColorBtn.setAttribute("class", "add-color-button");
-    addColorBtn.setAttribute("id", "add-color-button");
-    addColorBtn.setAttribute("title", "Add current color to palette")
-    addColorBtn.innerText = "+";
-    colorPalette.append(addColorBtn);
-    addColorBtn.addEventListener("click", (e) => {
-        console.log("Add custom color");
-        // add new color to array
-        if (colors.length >= 39) {
-            console.log("Readched color limit");
-        }
-        else if (colors.includes(currentColor)) {
-            console.log("ALEADY IN ARRAY");
-        } else {
-            colors.push(currentColor);
-            createColorPalette(colors);
 
-        }
-
-    });
 }
+
+
+// add color button
+
+addColorBtn.addEventListener("click", () => {
+    // add new color to array
+    if (colors.length >= 45) {
+        console.log("Reached color limit");
+    }
+    else if (colors.includes(currentColor)) {
+        console.log("ALEADY IN ARRAY");
+    } else {
+        colors.push(currentColor);
+        createColorPalette(colors);
+    }
+})
+
+// add colorbutton click style styling
+addColorBtn.addEventListener("mousedown", () => {
+    addColorBtn.style.backgroundColor = toolColorOn;
+    addColorBtn.style.color = "#222";
+});
+addColorBtn.addEventListener("mouseup", () => {
+    addColorBtn.style.transitionDuration = "0.1s";
+    addColorBtn.style.backgroundColor = "#333";
+    addColorBtn.style.color = "#ccc";
+});
+addColorBtn.addEventListener("mouseout", (e) => {
+    //addColorBtn.style.transitionDuration = "0.2s";
+    addColorBtn.style.backgroundColor = "#333";
+    addColorBtn.style.color = "#ccc";
+});
+
+
+// Remove color button
+removeColorBtn.addEventListener("click", (e) => {
+    if (isRemoveItem == false && colors.length > 1) {
+        isRemoveItem = true;
+        removeColorBtn.classList.add("remove-btn-active");
+        removeColorBtn.textContent = "Done";
+
+        const colorBoxes = document.querySelectorAll(".color");
+        colorBoxes.forEach((box) => {
+            box.textContent = "−";
+            setTimeout(() => {
+                box.classList.add("remove-item");
+            }, Math.random() * 100);
+
+            box.addEventListener("click", (e) => {
+                if(colors.includes(box.id) && colors.length > 1) {
+                    index = colors.indexOf(box.id);
+                    colors.splice(index, 1);
+                    box.remove();
+                    console.table(colors);
+                } 
+            });
+
+            // remove color from array
+        });
+    } else {
+        isRemoveItem = false;
+        const colorBoxes = document.querySelectorAll(".color");
+        colorBoxes.forEach((box) => {
+            box.textContent = "";
+            box.classList.remove("remove-item");
+        });
+        removeColorBtn.classList.remove("remove-btn-active");
+        removeColorBtn.textContent = "−";
+        createColorPalette(colors);
+    }
+        
+});
+
+
+
+
+
 
 // current color display
 function displayCurrentColor() {
@@ -328,18 +391,25 @@ colorPicker.addEventListener("input", (e) => {
 
 // brush size adjustment
 brushSlider.addEventListener("input", () => {
-    brushSliderDisplay.textContent = `${brushSlider.value}px`;
-    brushSize = brushSlider.value;
+    if (isFill) {
+        brushSliderDisplay.textContent = `${brushSlider.value}px`;
+        brushSizeTemp = brushSlider.value;
+    } else {
+        brushSliderDisplay.textContent = `${brushSlider.value}px`;
+        brushSize = brushSlider.value;
+    }
 });
 
 
 
 // grid size adjustment
 gridSlider.addEventListener("input", () => {
-    gridSliderDisplay.textContent = `${gridSlider.value} x ${gridSlider.value}`;
-    gridSize = gridSlider.value;
-    pixelSize = `${512 / gridSize}px`;
+    gridMultiplier = gridSlider.value;
+    gridSize = 2**gridMultiplier;
+    gridSliderDisplay.textContent = `${gridSize} x ${gridSize}`;
+    pixelSize = `${gridWidth/gridSize}px`;
     createGrid(gridSize, pixelSize, false);
+    
 });
 
 gridSlider.addEventListener("change", () => {
@@ -370,7 +440,7 @@ randomBtn.addEventListener("click", () => {
 });
 
 function randomColor() {
-    let i = Math.floor(Math.random() * (colors.length - 3));
+    let i = Math.floor(Math.random() * (colors.length));
     currentColor = colors[i];
     colorPicker.value = currentColor;
     //updateColorCss(currentColor);
@@ -650,3 +720,9 @@ function updateSlider(newGridSize) {
     gridSlider.value = newGridSize;
 }
 
+
+// confirmations before leaving
+window.addEventListener('beforeunload', function (e) {
+    e.preventDefault();
+    e.returnValue = '';
+});

@@ -18,5 +18,5 @@ features
 * custom color picker
 * add/remove custom colors
 * alternate tag on color hover
-- warning if leaving or refreshing page
+* warning if leaving or refreshing page
 - opacity
