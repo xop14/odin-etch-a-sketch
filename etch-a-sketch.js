@@ -10,6 +10,7 @@ const randomBtn = document.querySelector("#random-btn");
 const rainbowBtn = document.querySelector("#rainbow-btn");
 const brushTool = document.querySelector("#brush-tool");
 const fillTool = document.querySelector("#fill-tool");
+const eraseTool = document.querySelector("#erase-tool");
 const undoBtn = document.querySelector("#undo-btn");
 const redoBtn = document.querySelector("#redo-btn");
 const gridlinesBtn = document.querySelector("#gridlines-btn");
@@ -62,6 +63,7 @@ let mouseDown = 0;
 let isRandomColors = false;
 let isRainbowColors = false;
 let isFill = false;
+let isErase = false;
 let isRemoveItem = false;
 let undoCounter = 0;
 let undoCounterMax = 0;
@@ -71,6 +73,7 @@ let brushSize = 1;
 let redSpeed = 0;
 let greenSpeed = 0;
 let blueSpeed = 0;
+let colorTemp = currentColor;
 
 let xPos = null;
 let yPos = null;
@@ -305,8 +308,9 @@ function createColorPalette(colors) {
         colorBox.setAttribute("title", color);
         colorBox.className = 'color';
         colorBox.addEventListener("click", () => {
-            if (!(isRainbowColors || isRemoveItem)) {
+            if (!(isRainbowColors || isRemoveItem || isErase)) {
                 currentColor = color;
+                colorTemp = color;
                 colorPicker.value = currentColor;
                 //updateColorCss(currentColor);
             }
@@ -416,6 +420,7 @@ brushSlider.addEventListener("input", () => {
     } else {
         brushSliderDisplay.textContent = `${brushSlider.value}px`;
         brushSize = brushSlider.value;
+        brushSizeTemp = brushSlider.value;
     }
 });
 
@@ -658,11 +663,10 @@ fillTool.addEventListener("click", () => {
 
     if (isFill == false) {
         isFill = true;
+        isErase = false;
         brushSizeTemp = brushSize;
         brushSize = 1;
-    }
-    else {
-        isFill = false;
+        currentColor = colorTemp;
     }
 });
 
@@ -670,8 +674,20 @@ fillTool.addEventListener("click", () => {
 // brush tool button specific settings
 brushTool.style.color = toolColorOn;
 brushTool.addEventListener("click", () => {
-        isFill = false;
-        brushSize = brushSizeTemp;
+    isFill = false;
+    isErase = false;
+    brushSize = brushSizeTemp;
+    currentColor = colorTemp;
+});
+
+// eraser tool button specific settings
+
+eraseTool.addEventListener("click", () => {
+    isFill = false;
+    isErase = true;
+    brushSize = brushSizeTemp;
+    colorTemp = currentColor;
+    currentColor = "#FFFFFF";
 });
 
 
