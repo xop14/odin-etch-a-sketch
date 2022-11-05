@@ -20,3 +20,5 @@ features
 * alternate tag on color hover
 * warning if leaving or refreshing page
 - opacity
+- make mobile friendly?
+- clone stamp

@@ -39,7 +39,25 @@ let gridSize = 2**gridMultiplier;
 let pixelSize = `${gridWidth/gridSize}px`;
 
 let currentColor = "#FF0000";
-let colors = ["#FF0000", "#F2A93B", "#FFFF54", "#A5CC4F", "#377E22", "#42C5D7", "#075EBB" ,"#8C00FF", "#6B0E71", "#DE179F", "#FFADAD", "#FBE5C8" , "#712C0E", "#000000", "#666666", "#CCCCCC" ,"#FFFFFF"];
+let colors = [
+    "#FF0000", 
+    "#F2A93B", 
+    "#FFFF54", 
+    "#A5CC4F", 
+    "#377E22", 
+    "#42C5D7", 
+    "#075EBB", 
+    "#8C00FF", 
+    "#6B0E71", 
+    "#DE179F", 
+    "#FFADAD", 
+    "#FBE5C8", 
+    "#712C0E", 
+    "#000000", 
+    "#666666", 
+    "#CCCCCC",
+    "#FFFFFF"
+];
 let mouseDown = 0;
 let isRandomColors = false;
 let isRainbowColors = false;
@@ -191,6 +209,7 @@ function saveCanvasUndo(canvasSnapshot, gridSizeSnapshot) {
     canvasHistory[undoCounter] = copyArray(canvasSnapshot);
     gridSizeHistory[undoCounter] = gridSizeSnapshot;
 
+    // keeps track of undo position
     undoCounter++;
     undoCounterMax = undoCounter;
 
@@ -204,13 +223,13 @@ undoBtn.addEventListener("click", undo);
 
 function undo() {
     if (undoCounter <= 1) {
-        console.log("NOTHING TO UNDO");
+        // return when nothing to undo
         return;
     }
 
     const lastUndo = canvasHistory[undoCounter - 2];
     const lastGridSize = gridSizeHistory[undoCounter - 2];
-    const lastPixelSize = `${gridWidth/gridSize}px`;
+    const lastPixelSize = `${gridWidth/lastGridSize}px`;
 
     updateSlider(lastGridSize);
 
@@ -249,7 +268,7 @@ function redo() {
     }
     const nextRedo = canvasHistory[undoCounter];
     const nextGridSize = gridSizeHistory[undoCounter];
-    const nextPixelSize = `${gridWidth/gridSize}px`;
+    const nextPixelSize = `${gridWidth/nextGridSize}px`;
 
     updateSlider(nextGridSize);
 
@@ -417,6 +436,13 @@ gridSlider.addEventListener("change", () => {
 });
 
 
+// update grid size slider & display
+function updateSlider(newGridSize) {
+    gridSliderDisplay.textContent = `${newGridSize} x ${newGridSize}`;
+    console.log(Math.sqrt(newGridSize));
+    gridSlider.value = Math.log2(newGridSize);
+
+}
 
 // clear button
 clearBtn.addEventListener("click", () => {
@@ -713,12 +739,6 @@ btns.forEach((btn) => {
         btn.style.color = toolColorOff;
     })
 });
-
-// update grid size slider & display
-function updateSlider(newGridSize) {
-    gridSliderDisplay.textContent = `${newGridSize} x ${newGridSize}`;
-    gridSlider.value = newGridSize;
-}
 
 
 // confirmations before leaving
