@@ -329,10 +329,10 @@ function createColorPalette(colors) {
 addColorBtn.addEventListener("click", () => {
     // add new color to array
     if (colors.length >= 45) {
-        console.log("Reached color limit");
+        //console.log("Reached color limit");
     }
     else if (colors.includes(currentColor)) {
-        console.log("ALEADY IN ARRAY");
+        //console.log("ALEADY IN ARRAY");
     } else {
         colors.push(currentColor);
         createColorPalette(colors);
@@ -375,7 +375,7 @@ removeColorBtn.addEventListener("click", (e) => {
                     index = colors.indexOf(box.id);
                     colors.splice(index, 1);
                     box.remove();
-                    console.table(colors);
+                    //console.table(colors);
                 } 
             });
 
