@@ -308,11 +308,15 @@ function createColorPalette(colors) {
         colorBox.setAttribute("title", color);
         colorBox.className = 'color';
         colorBox.addEventListener("click", () => {
-            if (!(isRainbowColors || isRemoveItem || isErase)) {
-                currentColor = color;
-                colorTemp = color;
-                colorPicker.value = currentColor;
-                //updateColorCss(currentColor);
+            if (!(isRainbowColors || isRemoveItem)) {
+                if(isErase) {
+                    colorTemp = color;
+                    colorPicker.value = colorTemp;
+                } else {
+                    currentColor = color;
+                    colorTemp = color;
+                    colorPicker.value = currentColor;
+                }
             }
         });
     });
@@ -394,20 +398,25 @@ removeColorBtn.addEventListener("click", (e) => {
 
 
 
-
-
 // current color display
 function displayCurrentColor() {
-    colorPicker.value = currentColor;
+    if (isErase) {
+        colorPicker.value = colorTemp;
+    }
+    else {
+        colorPicker.value = currentColor;
+    }
 }
 
-
 // update current color using colorpicker
-
 colorPicker.addEventListener("input", (e) => {
-    currentColor = e.target.value; 
+    if (isErase) {
+        colorTemp = e.target.value;
+    } else {
+        colorTemp = e.target.value;
+        currentColor = e.target.value;
+    }
 });
-
 
 
 
