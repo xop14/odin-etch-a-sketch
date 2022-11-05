@@ -138,7 +138,7 @@ function createGrid(gridSize, pixelSize, saveUndo = true, canvasToLoad = []) {
                 // returns an array of pixels
                 const brushPixels = createBrushPixels();
                 
-                if (mouseDown) {
+                if (mouseDown && !isFill) {
                     if (isRandomColors) {
                         randomColor();
                     }
@@ -320,7 +320,6 @@ function createColorPalette(colors) {
             }
         });
     });
-
 }
 
 
@@ -453,7 +452,6 @@ gridSlider.addEventListener("change", () => {
 // update grid size slider & display
 function updateSlider(newGridSize) {
     gridSliderDisplay.textContent = `${newGridSize} x ${newGridSize}`;
-    console.log(Math.sqrt(newGridSize));
     gridSlider.value = Math.log2(newGridSize);
 
 }
