@@ -215,7 +215,6 @@ function saveCanvasUndo(canvasSnapshot, gridSizeSnapshot) {
     // keeps track of undo position
     undoCounter++;
     undoCounterMax = undoCounter;
-    console.log(undoCounter);
     undoRedoStyleUpdate();
 
 }
@@ -241,7 +240,6 @@ function undo() {
     createGrid(lastGridSize, lastPixelSize, false, lastUndo);
 
     undoCounter--;
-    console.log(undoCounter);
     undoRedoStyleUpdate();
 }
 
