@@ -13,12 +13,13 @@ features
 * redo button
 * undo/redo keyboard shortcuts
 * download image buttons
-* fill
+* fill tool
 * remove gridlines button
 * custom color picker
 * add/remove custom colors
 * alternate tag on color hover
 * warning if leaving or refreshing page
+* eraser tool
 - opacity
 - make mobile friendly?
 - clone stamp

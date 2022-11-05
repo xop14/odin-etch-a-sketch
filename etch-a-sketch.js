@@ -145,6 +145,7 @@ function createGrid(gridSize, pixelSize, saveUndo = true, canvasToLoad = []) {
                     if (isRainbowColors){
                         rainbowColors();
                     }
+                    // brush pixels is and array of pixels within the current brush size
                     brushPixels.forEach((brushPixel) => {
                         document.querySelector(brushPixel).style.backgroundColor = currentColor;
     
@@ -154,7 +155,6 @@ function createGrid(gridSize, pixelSize, saveUndo = true, canvasToLoad = []) {
                         let jBrushPixel = brushPixel.split(/[ij]/)[2];
                         currentCanvas[iBrushPixel][jBrushPixel] = currentColor;
                     });
-
                 }
             });
             pixel.addEventListener("mousedown", () => {
