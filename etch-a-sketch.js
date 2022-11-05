@@ -215,6 +215,8 @@ function saveCanvasUndo(canvasSnapshot, gridSizeSnapshot) {
     // keeps track of undo position
     undoCounter++;
     undoCounterMax = undoCounter;
+    console.log(undoCounter);
+    undoRedoStyleUpdate();
 
 }
 
@@ -226,7 +228,7 @@ undoBtn.addEventListener("click", undo);
 
 function undo() {
     if (undoCounter <= 1) {
-        // return when nothing to undo
+        //console.log("NOTHING TO UNDO");
         return;
     }
 
@@ -239,6 +241,7 @@ function undo() {
     createGrid(lastGridSize, lastPixelSize, false, lastUndo);
 
     undoCounter--;
+    console.log(undoCounter);
     undoRedoStyleUpdate();
 }
 
@@ -266,7 +269,7 @@ redoBtn.addEventListener("click", redo);
 
 function redo() {
     if (undoCounter >= undoCounterMax) {
-        console.log("NOTHING TO REDO");
+        //console.log("NOTHING TO REDO");
         return;
     }
     const nextRedo = canvasHistory[undoCounter];
@@ -453,7 +456,6 @@ gridSlider.addEventListener("change", () => {
 function updateSlider(newGridSize) {
     gridSliderDisplay.textContent = `${newGridSize} x ${newGridSize}`;
     gridSlider.value = Math.log2(newGridSize);
-
 }
 
 // clear button
