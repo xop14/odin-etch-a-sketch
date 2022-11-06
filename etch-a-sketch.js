@@ -573,33 +573,33 @@ function rainbowColors() {
 
     if (red == 255 && green == 0 && blue == 0) {
         redSpeed = 0;
-        greenSpeed = 5;
+        greenSpeed = 15;
         blueSpeed = 0;
     } 
     else if (red == 255 && green == 255 && blue == 0) {
-        redSpeed = -5;
+        redSpeed = -15;
         greenSpeed = 0;
         blueSpeed = 0;
     } 
     else if (red == 0 && green == 255 && blue == 0) {
         redSpeed = 0;
         greenSpeed = 0;
-        blueSpeed = 5;
+        blueSpeed = 15;
     } 
     else if (red == 0 && green == 255 && blue == 255) {
         redSpeed = 0;
-        greenSpeed = -5;
+        greenSpeed = -15;
         blueSpeed = 0;
     } 
     else if (red == 0 && green == 0 && blue == 255) {
-        redSpeed = 5;
+        redSpeed = 15;
         greenSpeed = 0;
         blueSpeed = 0;
     } 
     else if (red == 255 && green == 0 && blue == 255) {
         redSpeed = 0;
         greenSpeed = 0;
-        blueSpeed = -5;
+        blueSpeed = -15;
     } 
     red = red + redSpeed;
     blue = blue + blueSpeed;
