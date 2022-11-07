@@ -615,30 +615,31 @@ let fillCounter = 0;
 
 
 function fill(x, y, pixelColor, currentCanvas) {
-    // top
+    // pixel above
     if (y > 0 && currentCanvas[y - 1][x] == pixelColor) {
         currentCanvas[y - 1][x] = currentColor;
         fill(x, y - 1, pixelColor, currentCanvas);
     }
     
-    //right
+    // pixel to the right
     if (x < (gridSize - 1) && currentCanvas[y][x + 1] == pixelColor) {
         currentCanvas[y][x + 1] = currentColor;
         fill(x + 1, y, pixelColor, currentCanvas);
     }
     
-    // bottom
+    // pixel below
     if (y < (gridSize - 1) && currentCanvas[y + 1][x] == pixelColor) {
         currentCanvas[y + 1][x] = currentColor;
         fill(x, y + 1, pixelColor, currentCanvas);
     }
 
-    // left
+    // pixel to the left
     if (x > 0 && currentCanvas[y][x - 1] == pixelColor) {
         currentCanvas[y][x - 1] = currentColor;
         fill(x - 1, y, pixelColor, currentCanvas);
     }
     else {
+        currentCanvas[y][x] = currentColor;
         return;
     }
 }
