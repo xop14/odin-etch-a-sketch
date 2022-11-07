@@ -2,7 +2,7 @@
 
 Pixel Machine was originally created as part of the Odin Project 'Etch-a-Sketch' assignment.
 
-##Features
+## Features
 
 * Adjustable grid size
 * Color palette with ability to add/remove colors
@@ -19,7 +19,7 @@ Pixel Machine was originally created as part of the Odin Project 'Etch-a-Sketch'
 * Warning when leaving/refreshing page
 
 
-##Future features to add
+## Future features to add
 - Opacity slider
 - Mobile/touch friendly
 - Clone stamp
