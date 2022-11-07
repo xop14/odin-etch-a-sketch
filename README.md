@@ -1,6 +1,8 @@
 # Pixel Machine
 
-Pixel Machine was originally created as part of the Odin Project 'Etch-a-Sketch' assignment.
+URL: https://xop14.github.io/pixel-machine/
+
+Pixel Machine was originally created as part of the Odin Project's 'Etch-a-Sketch' assignment.
 
 ## Features
 
